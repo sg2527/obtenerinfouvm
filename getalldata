@@ -1,0 +1,165 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+using System.Net;
+using System.Net.Sockets;
+using Microsoft.VisualBasic.Devices;
+using Microsoft.Win32;
+
+namespace nombres
+{
+    public partial class Form1 : Form
+    {
+
+        String serie, nombre, procesador, ram, ip2, fecha, programs;
+        List<String> programas = new List<String>();
+        SqlConnection connection = new SqlConnection("Server = 10.25.171.53\\SERVERHISPANO; Database = maquinas; User Id = analista; Password = cclv");
+
+        public Form1()
+        {
+            InitializeComponent();
+            obtenerserial();
+            obtenernombre();
+            obtenercpu();
+            obtenerram();
+            obtenerIp();
+            obtenerFecha();
+            ComputerInfo cci = new ComputerInfo();
+            string version = cci.OSFullName;
+            string usuario = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+            MessageBox.Show("serie: "+serie+"\nnombre: "+nombre+"\nprocesador: "+procesador+"\nram: "+ram+"\nip: "+ip2+"\nfecha: "+fecha+"\nversion: "+version+"\nUsuario:"+usuario);
+            
+            /*SqlCommand command;
+            string sql = "Insert into reporte (serie, nombre, cpu, ram, version, ip, fecha, programas) values ('" + serie + "', '" + nombre + "', '" + procesador + "', '" + ram + "', '"+version+"', '" + ip2 + "', '" + fecha + "', '" + programs+"';";
+            try
+            {
+                connection.Open();
+                command = new SqlCommand(sql, connection);
+                command.ExecuteNonQuery();
+                connection.Close();
+                MessageBox.Show("Datos ingresados correctamente");
+            }
+            catch (Exception ex)
+            {
+                if (ex.ToString().Contains("duplicate"))
+                {
+                    sql = "update reporte set nombre='"+nombre+"' and ip='"+ip2+"' and fecha='"+fecha+"' and programas='"+programs+"';";
+                    connection.Open();
+                    command = new SqlCommand(sql, connection);
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                    MessageBox.Show("Datos ingresados correctamente");
+                    System.Windows.Forms.Application.Exit();
+                }
+
+                MessageBox.Show("Error: "+ex.Message);
+                System.Windows.Forms.Application.Exit();
+                connection.Close();
+            }*/
+
+        }
+
+        private void obtenerProgramas() { 
+            
+            
+        }
+
+        private void obtenerIp() {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    ip2 = ip.ToString();
+                }
+            }
+            
+
+        }
+
+        private void obtenerFecha() {
+            DateTime ahora = DateTime.Now;
+            fecha = ahora.ToString();
+        }
+
+        private void obtenerserial()
+        {
+            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.FileName = "CMD.exe";
+            startInfo.Arguments = "/c wmic bios get serialnumber";
+            process.StartInfo = startInfo;
+            process.Start();
+            string output = process.StandardOutput.ReadToEnd();
+            serie = output.Replace("SerialNumber", string.Empty);
+        }
+
+        private void obtenerram()
+        {
+            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.FileName = "CMD.exe";
+            startInfo.Arguments = "/c wmic memorychip get capacity";
+            process.StartInfo = startInfo;
+            process.Start();
+            string output = process.StandardOutput.ReadToEnd();
+            ram = output.Replace("Capacity", string.Empty);
+            /*ram2 = (int) ram;
+            MessageBox.Show(""+ram2);
+            ram2 = ram2 / 1048576;*/
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void obtenercpu()
+        {
+            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.FileName = "CMD.exe";
+            startInfo.Arguments = "/c wmic cpu get name";
+            process.StartInfo = startInfo;
+            process.Start();
+            string output = process.StandardOutput.ReadToEnd();
+            procesador = output.Replace("Name", string.Empty);
+        }
+
+        private void obtenernombre()
+        {
+            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.FileName = "CMD.exe";
+            startInfo.Arguments = "/c hostname";
+            process.StartInfo = startInfo;
+            process.Start();
+            string output = process.StandardOutput.ReadToEnd();
+            nombre = output.Replace("SerialNumber", string.Empty);
+        }
+
+
+
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            Application.Exit();
+            this.Dispose();
+        }
+    }
+}

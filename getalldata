@@ -36,7 +36,7 @@ namespace nombres
             string usuario = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
             MessageBox.Show("serie: "+serie+"\nnombre: "+nombre+"\nprocesador: "+procesador+"\nram: "+ram+"\nip: "+ip2+"\nfecha: "+fecha+"\nversion: "+version+"\nUsuario:"+usuario);
             
-            /*SqlCommand command;
+            SqlCommand command;
             string sql = "Insert into reporte (serie, nombre, cpu, ram, version, ip, fecha, programas) values ('" + serie + "', '" + nombre + "', '" + procesador + "', '" + ram + "', '"+version+"', '" + ip2 + "', '" + fecha + "', '" + programs+"';";
             try
             {
@@ -62,7 +62,7 @@ namespace nombres
                 MessageBox.Show("Error: "+ex.Message);
                 System.Windows.Forms.Application.Exit();
                 connection.Close();
-            }*/
+            }
 
         }
 
